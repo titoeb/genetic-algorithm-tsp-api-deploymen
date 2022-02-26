@@ -1,0 +1,14 @@
+name: Test that the container can be build, without pushing it.
+on: pull_request
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository.
+        uses: actions/checkout@v1
+
+      - name: Pull latest image
+        run: docker pull titoeb/genetic-algorithm-tsp-api:latest || exit 0
+
+      - name: Build image
+        run: docker build -f Docker/API.Dockerfile --cache-from titoeb/genetic-algorithm-tsp-api:latest -t titoeb/genetic-algorithm-tsp-api:latest .

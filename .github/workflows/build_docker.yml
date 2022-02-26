@@ -11,20 +11,16 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Login to Dockerhub
-        run: echo ${{ DOCKER_PASSWORD}} | docker login --username ${{ DOCKER_USERNAME }} --password-stdin
+        run: echo ${{ secrets.DOCKERHUB_TOKEN}} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       - name: Pull latest image
-        run: docker pull genetic-algorith-tsp-api:latest
+        run: docker pull titoeb/genetic-algorithm-tsp-api:latest || exit 0
 
       - name: Build image
-        run: docker build -f Docker/API.Dockerfile \
-          --cache-from genetic-algorith-tsp-api:latest \
-          -t genetic-algorith-tsp-api:latest \
-          -t genetic-algorith-tsp-api:{GITHUB_SHA} \
-          .
+        run: docker build -f Docker/API.Dockerfile --cache-from titoeb/genetic-algorithm-tsp-api:latest -t titoeb/genetic-algorithm-tsp-api:latest -t titoeb/genetic-algorithm-tsp-api:${GITHUB_SHA} .
 
       - name: Push image with latest tag.
-        run: docker push genetic-algorith-tsp-api:latest
+        run: docker push titoeb/genetic-algorithm-tsp-api:latest
 
       - name: Push image with git commit as tag.
-        run: docker push genetic-algorith-tsp-api:{GITHUB_SHA}
+        run: docker push titoeb/genetic-algorithm-tsp-api:${GITHUB_SHA}
