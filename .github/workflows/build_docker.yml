@@ -1,0 +1,30 @@
+name: Build container with API.
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository.
+        uses: actions/checkout@v1
+
+      - name: Login to Dockerhub
+        run: echo ${{ DOCKER_PASSWORD}} | docker login --username ${{ DOCKER_USERNAME }} --password-stdin
+
+      - name: Pull latest image
+        run: docker pull genetic-algorith-tsp-api:latest
+
+      - name: Build image
+        run: docker build -f Docker/API.Dockerfile \
+          --cache-from genetic-algorith-tsp-api:latest \
+          -t genetic-algorith-tsp-api:latest \
+          -t genetic-algorith-tsp-api:{GITHUB_SHA} \
+          .
+
+      - name: Push image with latest tag.
+        run: docker push genetic-algorith-tsp-api:latest
+
+      - name: Push image with git commit as tag.
+        run: docker push genetic-algorith-tsp-api:{GITHUB_SHA}
