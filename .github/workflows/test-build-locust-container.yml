@@ -1,0 +1,14 @@
+name: Test that the locust container for load testing can be build.
+on: pull_request
+jobs:
+  test-build-locust-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository.
+        uses: actions/checkout@v1
+
+      - name: Pull latest image
+        run: docker pull titoeb/genetic-algorithm-locust-api:latest || exit 0
+
+      - name: Build image
+        run: docker build -f Docker/locust.Dockerfile --cache-from titoeb/genetic-algorithm-locust-api:latest -t titoeb/genetic-algorithm-locust-api:latest .
