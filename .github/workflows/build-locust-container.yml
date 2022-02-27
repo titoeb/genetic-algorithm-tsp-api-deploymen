@@ -1,0 +1,26 @@
+name: Build container for locust load-test.
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-locust-server-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository.
+        uses: actions/checkout@v1
+
+      - name: Login to Dockerhub
+        run: echo ${{ secrets.DOCKERHUB_TOKEN}} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Pull latest image
+        run: docker pull titoeb/genetic-algorithm-locust-api:latest || exit 0
+
+      - name: Build image
+        run: docker build -f Docker/locust.Dockerfile --cache-from titoeb/genetic-algorithm-locust-api:latest -t titoeb/genetic-algorithm-locust-api:latest -t titoeb/genetic-algorithm-locust-api:${GITHUB_SHA} .
+
+      - name: Push image with latest tag.
+        run: docker push titoeb/genetic-algorithm-locust-api:latest
+
+      - name: Push image with git commit as tag.
+        run: docker push titoeb/genetic-algorithm-locust-api:${GITHUB_SHA}
