@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tsp-api
-          image: docker.io/titoeb/genetic-algorithm-tsp-api:a575a08d60c662dfa1520a407fd02bdbb0e08de0
+          image: docker.io/titoeb/genetic-algorithm-tsp-api:40e24888052f7ec5269b3b9fe3e3ab867d322b74
           env:
             - name: ROCKET_WORKERS
               value: "2"
@@ -52,7 +52,7 @@ spec:
       port: 8000
       targetPort: 8000
 ---
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: tsp-api-scaler
@@ -63,4 +63,10 @@ spec:
     name: tsp-api-deployment
   minReplicas: 1
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 50
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: AverageValue
+          averageUtilization: 40
