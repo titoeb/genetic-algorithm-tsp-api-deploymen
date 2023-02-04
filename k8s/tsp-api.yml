@@ -69,4 +69,4 @@ spec:
         name: cpu
         target:
           type: AverageValue
-          averageUtilization: 40
+          averageUtilization: 80
